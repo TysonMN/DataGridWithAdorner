@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DataGridWithAdorner.View\DataGridWithAdorner.View.csproj" />
+    <ProjectReference Include="..\DataGridWithAdorner.View\DataGridWithAdorner.View.csproj" />
   </ItemGroup>
-</Project>  
+
+</Project>
