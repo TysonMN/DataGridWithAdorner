@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DataGridWithAdorner.View
 {
@@ -20,6 +12,15 @@ namespace DataGridWithAdorner.View
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void ListView_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var item = (sender as ListView).SelectedItem;
+            var dc = DataContext;
+
+            var r = MessageBox.Show("I would like to start the adorner from here but can't cast the SelectedItem!");
+
         }
     }
 }

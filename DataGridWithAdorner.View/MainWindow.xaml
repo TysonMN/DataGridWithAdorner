@@ -30,7 +30,8 @@
                         <DataTemplate>
                             <Grid DataContext="{Binding Columns[0]}">
                                 <ListView ItemsSource="{Binding InnerRows}" 
-                                      SelectedItem="{Binding SelectedInnerRow, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center">
+                                      SelectedItem="{Binding SelectedInnerRow, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center"
+                                      PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp">
 
                                     <ListView.View>
                                         <GridView>
