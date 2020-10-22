@@ -1,9 +1,15 @@
 ﻿namespace DataGridWithAdorner
 
 open System
+open System.Windows
+open System.Windows.Controls
+open System.Windows.Input
+
 open Elmish
 open Elmish.WPF
+
 open DataGridWithAdorner.View
+
 
 module Cell =
     type Model =
@@ -28,6 +34,7 @@ module Column =
 
     type Msg =
         | Select of int option
+        | NoOp
 
     let init i j =
         { Id = i*10  + j
@@ -44,6 +51,18 @@ module Column =
     let update msg m =
         match msg with
         | Select id -> { m with SelectedInnerRow = id }
+        | NoOp -> m
+
+
+    let handlePreviewMouseLeftButtonUp (obj: obj) (a, c) =
+      let e = (obj :?> MouseButtonEventArgs)
+      let listView = e.Source :?> ListView
+      let grid = listView.Parent :?> Grid
+
+      let selectedItem = c.InnerRows.[c.SelectedInnerRow.Value]
+
+      MessageBox.Show("I can start the adorner from here now that I have the ListView, Grid, and SelectedItem!") |> ignore
+      NoOp
         
 
     let bindings() : Binding<('a * Model), Msg> list = [
@@ -54,7 +73,8 @@ module Column =
             snd,
             Cell.bindings)
 
-        "SelectedInnerRow" |> Binding.subModelSelectedItem("InnerRows", (fun (_, r) -> r.SelectedInnerRow), (fun cId _ -> Select cId))
+        "SelectedInnerRow" |> Binding.subModelSelectedItem("InnerRows", (fun (_, c) -> c.SelectedInnerRow), (fun cId _ -> Select cId))
+        "PreviewMouseLeftButtonUp" |> Binding.cmdParam handlePreviewMouseLeftButtonUp
     ]
 
 
