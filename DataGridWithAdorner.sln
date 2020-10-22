@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataGridWithAdorner.View", "DataGridWithAdorner.View\DataGridWithAdorner.View.csproj", "{854129BD-4978-4A1C-BCB6-3DACBEF6DB8D}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DataGridWithAdorner", "DataGridWithAdorner\DataGridWithAdorner.fsproj", "{D18FB267-CC1A-476E-A3BB-3F1751F5D654}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataGridWithAdorner.View", "DataGridWithAdorner.View\DataGridWithAdorner.View.csproj", "{854129BD-4978-4A1C-BCB6-3DACBEF6DB8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
