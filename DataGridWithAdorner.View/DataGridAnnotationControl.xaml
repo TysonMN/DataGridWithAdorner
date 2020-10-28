@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="DataGridWithAdorner.View.DataGridAnnotationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Background="AliceBlue"
+            BorderBrush="Black"
+            BorderThickness="20 20 20 20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="26"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <TextBlock Text="Last Name*"/>
+                <TextBox Text="{Binding NewLastName}" x:Name="MyTextBox"
+                         Margin="10,0" Width="120" FontSize="12"/>
+            </StackPanel>
+            <Button Grid.Row="1" Content="Save"
+                    Command="{Binding SaveLastName}"/>
+        </Grid>
+    </Border>
+</UserControl>
