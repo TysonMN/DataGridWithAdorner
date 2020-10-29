@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DataGridAnnotationAdorner.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

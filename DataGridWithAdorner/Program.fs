@@ -1,7 +1,6 @@
 ﻿namespace DataGridWithAdorner
 
 open System
-open System.Windows
 open System.Windows.Controls
 open System.Windows.Input
 
@@ -16,9 +15,11 @@ module Cell =
         { Id: int
           CellName: string }
 
-    let init i j k=
+    let init i j k =
         { Id = i*100 + j*10 + k
           CellName = sprintf "CellName %i  %i  %i" i j k }
+
+    let setName s m = { m with CellName = s }
 
     let bindings() = [
         "LastName" |> Binding.oneWay(fun (_, c) -> c.CellName)
@@ -30,16 +31,20 @@ module Column =
     type Model =
         { Id: int
           InnerRows: Cell.Model list
-          SelectedInnerRow: int option }
+          SelectedInnerRow: int option
+          NewLastName: string }
 
     type Msg =
         | Select of int option
+        | SetNewLastName of string
+        | SaveLastName
         | NoOp
 
     let init i j =
         { Id = i*10  + j
           InnerRows = [0 .. 2] |> List.map (Cell.init i j) 
-          SelectedInnerRow = None}
+          SelectedInnerRow = None
+          NewLastName = "" }
 
     let isSelectMsg = function
     | Select (Some _) -> true
@@ -51,21 +56,44 @@ module Column =
     let update msg m =
         match msg with
         | Select id -> { m with SelectedInnerRow = id }
+        | SetNewLastName s -> { m with NewLastName = s }
+        | SaveLastName ->
+            let rows =
+              m.InnerRows
+              |> List.map (fun r ->
+                  if Some r.Id = m.SelectedInnerRow then
+                    Cell.setName m.NewLastName r
+                  else
+                    r)
+            { m with InnerRows = rows }
         | NoOp -> m
 
 
-    let handlePreviewMouseLeftButtonUp (obj: obj) (a, c) =
+    let mutable private closeAdorner = (fun () -> ())
+
+    let handlePreviewMouseLeftButtonUp (obj: obj) (_, c) =
+      closeAdorner ()
+
       let e = (obj :?> MouseButtonEventArgs)
       let listView = e.Source :?> ListView
       let grid = listView.Parent :?> Grid
+      let selectedItem = c.InnerRows |> List.filter (fun r -> Some r.Id = c.SelectedInnerRow) |> List.head
 
-      let selectedItem = c.InnerRows.[c.SelectedInnerRow.Value]
+      let adornerLayer = System.Windows.Documents.AdornerLayer.GetAdornerLayer(grid);
+      if (adornerLayer = null) then
+          failwith "datagrid does not have have an adorner layer";
 
-      MessageBox.Show("I can start the adorner from here now that I have the ListView, Grid, and SelectedItem!") |> ignore
+      let control = DataGridAnnotationControl ()
+      control.DataContext <- grid.DataContext
+      let adorner = DataGridAnnotationAdorner(grid, control)
+      adornerLayer.Add(adorner);
+        
+      closeAdorner <- (fun () -> adornerLayer.Remove adorner)
+
       NoOp
         
 
-    let bindings() : Binding<('a * Model), Msg> list = [
+    let bindings () : Binding<('a * Model), Msg> list = [
         "InnerRows" |> Binding.subModelSeq(
             (fun (_, p) -> p.InnerRows),
             (fun ((_, p), c) -> (p.SelectedInnerRow = Some c.Id, c)),
@@ -74,7 +102,10 @@ module Column =
             Cell.bindings)
 
         "SelectedInnerRow" |> Binding.subModelSelectedItem("InnerRows", (fun (_, c) -> c.SelectedInnerRow), (fun cId _ -> Select cId))
-        "PreviewMouseLeftButtonUp" |> Binding.cmdParam handlePreviewMouseLeftButtonUp
+        "PreviewMouseLeftButtonUp" |> Binding.cmdParam (handlePreviewMouseLeftButtonUp)
+
+        "NewLastName" |> Binding.twoWay((fun (_, m) -> m.NewLastName), SetNewLastName)
+        "SaveLastName" |> Binding.cmd SaveLastName
     ]
 
 
@@ -116,7 +147,7 @@ module OutterRow =
           { m with Columns = columns }
 
 
-    let bindings() :Binding<(bool * Model), Msg> list = [
+    let bindings () :Binding<(bool * Model), Msg> list = [
         "RowTime" |> Binding.oneWay(fun (b, p) -> p.OutterRowName + (if b then " - Selected" else ""))
 
         "Columns" |> Binding.subModelSeq(
